@@ -1,6 +1,10 @@
 # RfC_dumper
 Parses and dumps given Wikipedia RfCs' content, author information etc. into a MySQL database
 
+## Requires...
+1. Requires python 2.X
+
+2. Install MySQLdb 1.3.9
 
 ## How to run it.
 1. git clone https://github.com/trusttri/RfC_dumper.git
@@ -12,3 +16,5 @@ Parses and dumps given Wikipedia RfCs' content, author information etc. into a M
 For example in my case it was `python grab_rfcs.py rfcs.json Scott605`
 
 
+## Tested on..
+Tested on Windows 7 and 8, using Python 2.7 and MySQLdb 1.3.9
