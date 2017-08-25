@@ -11,7 +11,7 @@ Parses and dumps given Wikipedia RfCs' content, author information etc. into a M
 
 2. `cd RfC_dumper`
 
-3. Before running the script, create a new database called *wikum*, then go to /RfC_dumper/db and dump the wikum.sql to it. `mysql -u root -p wikum < wikum.sql` It's important that the name of database is wikum, since I fixed the name in grab_rfcs.py.
+3. Before running the script, create a new database called *wikum*, then go to /RfC_dumper/db and dump the wikum.sql to it (`mysql -u root -p wikum < wikum.sql`). It's important that the name of database is wikum, since I fixed the name in grab_rfcs.py.
 
 4. Run the script: `python grab_rfcs.py [name of json file] [password of DB]`. For example in my case it was `python grab_rfcs.py rfcs.json Scott605`
 
