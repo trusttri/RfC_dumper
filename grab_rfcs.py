@@ -7,6 +7,9 @@ from import_data import get_article, get_wiki_talk_posts, count_replies
 from warnings import filterwarnings
 filterwarnings('ignore', category = mdb.Warning)
 
+
+_DB_NAME = 'wikum'
+
 class DB():
     def __init__(self, host, user, passwd, db):
         try:
@@ -71,17 +74,17 @@ if __name__ == "__main__":
     # In this case it would be "rfcs.json"
     file_name = os.path.dirname(os.path.realpath(__file__)) + '/' + sys.argv[1]
     with open(file_name) as file:
-        rfcs = json.load(file)[0]
+        rfcs = json.load(file)
 
     # password
     password = sys.argv[2]
 
     # make DB object
     # Fixed the name of the database to 'wikum'.
-    rfc_DB = DB('localhost', 'root', password, 'wikum')
+    rfc_DB = DB('localhost', 'root', password, _DB_NAME)
 
 
-    for id, url in rfcs.items():
+    for url in rfcs:
         print url
         source_id = None
         if 'wikipedia.org/wiki/' in url:
