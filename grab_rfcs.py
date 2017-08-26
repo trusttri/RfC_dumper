@@ -16,6 +16,9 @@ class DB():
             self.conn = mdb.connect(host= host, user=user, passwd = passwd, db=db)
             self.anonymous_id = self.store_anonymous_id()
             self.wiki_source_id = self.store_wiki_source_id()
+
+            self.conn.set_character_set('utf8')
+
         except mdb.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])
             sys.exit(1)
@@ -38,6 +41,9 @@ class DB():
 
     def fetch_one(self, cmd, params):
         with closing(self.conn.cursor()) as cur:
+            cur.execute('SET NAMES utf8;')
+            cur.execute('SET CHARACTER SET utf8;')
+            cur.execute('SET character_set_connection=utf8;')
             cur.execute(cmd, params)
             result = cur.fetchone()
             if result:
@@ -46,18 +52,27 @@ class DB():
 
     def fetch_all(self, cmd, params):
         with closing(self.conn.cursor()) as cur:
+            cur.execute('SET NAMES utf8;')
+            cur.execute('SET CHARACTER SET utf8;')
+            cur.execute('SET character_set_connection=utf8;')
             cur.execute(cmd, params)
             rows = cur.fetchall()
             return rows
 
     def insert(self, cmd, params):
         with closing(self.conn.cursor()) as cur:
+            cur.execute('SET NAMES utf8;')
+            cur.execute('SET CHARACTER SET utf8;')
+            cur.execute('SET character_set_connection=utf8;')
             cur.execute(cmd, params)
             self.conn.commit()
             return cur.lastrowid
 
     def update(self, command, params):
         with closing(self.conn.cursor()) as cur:
+            cur.execute('SET NAMES utf8;')
+            cur.execute('SET CHARACTER SET utf8;')
+            cur.execute('SET character_set_connection=utf8;')
             cur.execute(command, params)
             self.conn.commit()
             return cur.lastrowid
