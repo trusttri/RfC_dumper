@@ -216,11 +216,11 @@ def import_wiki_talk_posts(comments, article_id, reply_to, total_count, rfc_DB):
     return total_count
 
 def import_wiki_authors(authors, rfc_DB):
-    found_authors = []
+    found_authors = set()
     anonymous_exist = False
     for author in authors:
         if author:
-            found_authors.append(author)
+            found_authors.add(author)
         else:
             anonymous_exist = True
     authors_list = '|'.join(found_authors)
