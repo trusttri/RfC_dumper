@@ -274,7 +274,7 @@ def count_replies(article_id, rfc_DB):
             (num_replies, )= rfc_DB.fetch_one(command, (disqus_id, article_id))
 
             update_command = "update website_comment set num_replies = %s  where id= %s"
-            rfc_DB.update(update_command (num_replies, id))
+            rfc_DB.update(update_command, (num_replies, id))
 
 
 
