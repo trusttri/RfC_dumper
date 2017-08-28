@@ -216,11 +216,11 @@ def import_wiki_talk_posts(comments, article_id, reply_to, total_count, rfc_DB):
     return total_count
 
 def import_wiki_authors(authors, rfc_DB):
-    found_authors = []
+    found_authors = set()
     anonymous_exist = False
     for author in authors:
         if author:
-            found_authors.append(author)
+            found_authors.add(author)
         else:
             anonymous_exist = True
     authors_list = '|'.join(found_authors)
@@ -274,7 +274,7 @@ def count_replies(article_id, rfc_DB):
             (num_replies, )= rfc_DB.fetch_one(command, (disqus_id, article_id))
 
             update_command = "update website_comment set num_replies = %s  where id= %s"
-            rfc_DB.update(update_command (num_replies, id))
+            rfc_DB.update(update_command, (num_replies, id))
 
 
 
