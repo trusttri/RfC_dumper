@@ -16,7 +16,7 @@ _DOMAIN = "https://en.wikipedia.org"
 
 def get_article(url, source_id, rfc_DB):
     cmd = 'select id, disqus_id, section_index, title from website_article where url = %s'
-    article_result = rfc_DB.fetch_one(cmd, (url,))
+    article_result = rfc_DB.fetch_one(cmd, (urllib2.unquote(url),))
 
     if article_result is not None:
         article_id, disqus_id, section_index, title = article_result
