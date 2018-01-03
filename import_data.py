@@ -180,7 +180,7 @@ def import_wiki_talk_posts(comments, article_id, reply_to, total_count, rfc_DB):
         else:
             # time = None
 
-            timestamp = datetime.datetime.strptime(comment.get('time_stamp'), '%Y-%m-%dT%H:%M:%SZ')
+            timestamp = comment.get('time_stamp')
 
             cosigners = [sign['author'] for sign in comment['cosigners']]
             comment_cosigners = import_wiki_authors(cosigners, rfc_DB)
