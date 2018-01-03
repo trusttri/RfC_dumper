@@ -5,12 +5,8 @@ import datetime
 import re
 import wikichatter.signatureutils as su
 
-_CLOSE_COMMENT_KEYWORDS = [r'{{(atop|quote box|consensus|Archive(-?)( ?)top|Discussion( ?)top|(closed.*?)?rfc top)',
-                           r'\|result=', r"={2,3}( )?Clos(e|ing)( comment(s?)|( RFC)?)( )?={2,3}",
-                           'The following discussion is an archived discussion of the proposal',
-                           'A summary of the debate may be found at the bottom of the discussion',
-                           'A summary of the conclusions reached follows']
-_CLOSE_COMMENT_RE = re.compile(r'|'.join(_CLOSE_COMMENT_KEYWORDS), re.IGNORECASE | re.DOTALL)
+_CLOSE_COMMENT_KEYWORDS =  [r'{{(atop|quote box|consensus|Archive(-?)( ?)top|Discussion( ?)top|(closed.*?)?rfc top)', r'\|result=', r"(={2,3}|''')( )?Clos(e|ing)( comment(s?)|( RFC)?)( )?(={2,3}|''')" , 'The following discussion is an archived discussion of the proposal' , 'A summary of the debate may be found at the bottom of the discussion', 'A summary of the conclusions reached follows']
+_CLOSE_COMMENT_RE = re.compile(r'|'.join(_CLOSE_COMMENT_KEYWORDS), re.IGNORECASE|re.DOTALL)
 
 _DOMAIN = "https://en.wikipedia.org"
 
@@ -52,7 +48,7 @@ def get_article(url, source_id, rfc_DB):
                             section_title = s['line']
                             section_index = s['index']
                 title = result['parse']['title']
-                if section_title:
+                if section_title is not None:
                     title = title + ' - ' + section_title
 
                 link = urllib2.unquote(url)
@@ -184,7 +180,7 @@ def import_wiki_talk_posts(comments, article_id, reply_to, total_count, rfc_DB):
         else:
             # time = None
 
-            timestamp = comment.get('time_stamp')
+            timestamp = datetime.datetime.strptime(comment.get('time_stamp'), '%Y-%m-%dT%H:%M:%SZ')
 
             cosigners = [sign['author'] for sign in comment['cosigners']]
             comment_cosigners = import_wiki_authors(cosigners, rfc_DB)
@@ -215,6 +211,7 @@ def import_wiki_talk_posts(comments, article_id, reply_to, total_count, rfc_DB):
 
     return total_count
 
+
 def import_wiki_authors(authors, rfc_DB):
     found_authors = set()
     anonymous_exist = False
@@ -234,15 +231,18 @@ def import_wiki_authors(authors, rfc_DB):
     result = request.query()
     comment_authors = []
     for user in result['query']['users']:
+        comment_author_id = None
         try:
             author_id = user['userid']
-            command= "select id from website_commentauthor where disqus_id = %s"
-            (comment_author_id, )= rfc_DB.fetch_one(command, (author_id,))
+            # first check if the author exists using the username
+            command= "select id from website_commentauthor where username = %s"
+            (comment_author_id, )= rfc_DB.fetch_one(command, (user['name'],))
+            # if no author exists with the same username
             if comment_author_id is None:
                 author_insert_command = " insert into website_commentauthor (username, disqus_id, joined_at, edit_count, gender, groups, is_wikipedia)\
                         values (%s, %s, %s, %s, %s, %s, %s)"
-
-                params = (user['name'], author_id, user['registration'], user['editcount'], user['gender'], ','.join(user['groups']), 1)
+                joined_at = datetime.datetime.strptime(user['registration'], '%Y-%m-%dT%H:%M:%SZ')
+                params = (user['name'], author_id, joined_at, user['editcount'], user['gender'], ','.join(user['groups']), 1)
                 comment_author_id = rfc_DB.insert(author_insert_command, params)
 
 
@@ -252,7 +252,7 @@ def import_wiki_authors(authors, rfc_DB):
 
             comment_author_id = rfc_DB.insert(command, (user['name'], 1))
 
-        if comment_author_id:
+        if comment_author_id is not None:
             comment_authors.append(comment_author_id)
 
     if anonymous_exist:
