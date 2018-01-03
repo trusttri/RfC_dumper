@@ -126,5 +126,5 @@ if __name__ == "__main__":
                         print '-----------> already in'
             else:
                 print '[ WARNING: Corresponding RfC was not found in the DB and neither did the API retrieve information of url. ]'
-
+    print "ALL FINISHED"
     rfc_DB.close()
